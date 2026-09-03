@@ -28,16 +28,17 @@ char *ft_itoa(int n) {
     if (isNegative) {
         i++; //for the malloc
     }
-    char *result = malloc(i);
+    char *result = malloc(i+1);
     if (result == 0) {
         return 0;
     }
+    result[i] = 0; //set end of string to 0
+
     if (isNegative) {
         result[0] = '-';
         counter++;
         i--;
     }
-    result[i] = 0; //set end of string to 0
     i--;
     while (i >= 0) {
         result[counter] = (char) (array[i] + 48);
