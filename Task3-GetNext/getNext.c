@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
+#include "getNext.h"
+
 /*
     Read the next line according to the file descriptor fd
     fd- The file descriptor
@@ -10,18 +12,25 @@ char *get_next_line(int fd) {
     char* result = calloc(10, sizeof(char));
     ssize_t charsRead = 0;
     while(1) {
-        charsRead = read(fd, result + sizeof(char) * charCount, 1);
+        charsRead = read(fd, result + sizeof(char) * charCount, BUFFER_SIZE);
         if (charsRead <= 0) break;
         charCount += charsRead;
         if (charCount % 10 == 0) {
             result = realloc(result, (charCount + 10) * sizeof(char));
-            if (result == 0) return NULL;
+            if (result == 0) {
+                free(result);
+                return NULL;
+            }
         }
+        if (result[charCount-1] == '\n') break;
     }
-    if (charsRead == -1) return NULL;
-    // shrink down the memory and add null at the end
+    if (charsRead < 0 || (charsRead == 0 && charCount == 0)) {
+        free(result);
+        return NULL;
+    }
+    // shrink down the memory and add null at the end,
+    result[(charCount) * sizeof(char)] = 0;
     result = realloc(result, (charCount + 1) * sizeof(char));
     if (result == 0) return NULL;
-    result[(charCount) * sizeof(char)] = 0;
     return result;
 }
