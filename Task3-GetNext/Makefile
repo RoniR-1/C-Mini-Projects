@@ -1,8 +1,8 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=1
+CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=42
 NAME = getNext
 
-SRCS = getNext.c main.c
+SRCS = get_next_line.c get_next_line_utils.c main.c
 OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
