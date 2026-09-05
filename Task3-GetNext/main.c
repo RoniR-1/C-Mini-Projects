@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "getNext.h"
 
-void test_fd(int fd, const char *title) // AI generated test cases for ease
+void test_fd(int fd, const char *title)
 {
     char *line;
     int line_num = 1;
@@ -13,7 +13,8 @@ void test_fd(int fd, const char *title) // AI generated test cases for ease
     while ((line = get_next_line(fd)) != NULL)
     {
         printf("Line %d: %s", line_num++, line);
-        
+
+        // If the line didn't end with '\n', print a newline so terminal stays clean
         int len = 0;
         while (line[len])
             len++;
@@ -36,26 +37,41 @@ int main(void)
         test_fd(fd, "Standard File Test");
         close(fd);
     }
+    else
+    {
+        printf("\n--- Standard File Test ---\n");
+        printf("Warning: data.txt not found! Create data.txt to run this test.\n");
+    }
 
     // 2. File Ending WITHOUT '\n'
     fd = open("no_newline.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
-    write(fd, "Line 1\nLine 2 without newline", 29);
-    close(fd);
+    if (fd >= 0)
+    {
+        char *str = "Line 1\nLine 2 without newline";
+        int len = 0;
+        while (str[len])
+            len++;
+        write(fd, str, len); // Exact byte count
+        close(fd);
 
-    fd = open("no_newline.txt", O_RDONLY);
-    test_fd(fd, "No Trailing Newline Test");
-    close(fd);
-    unlink("no_newline.txt");
+        fd = open("no_newline.txt", O_RDONLY);
+        test_fd(fd, "No Trailing Newline Test");
+        close(fd);
+        unlink("no_newline.txt");
+    }
 
     // 3. Single Newline Only File ("\n")
     fd = open("single_nl.txt", O_CREAT | O_WRONLY | O_TRUNC, 0644);
-    write(fd, "\n", 1);
-    close(fd);
+    if (fd >= 0)
+    {
+        write(fd, "\n", 1);
+        close(fd);
 
-    fd = open("single_nl.txt", O_RDONLY);
-    test_fd(fd, "Single Newline File Test");
-    close(fd);
-    unlink("single_nl.txt");
+        fd = open("single_nl.txt", O_RDONLY);
+        test_fd(fd, "Single Newline File Test");
+        close(fd);
+        unlink("single_nl.txt");
+    }
 
     // 4. Invalid File Descriptor Error Handling
     test_fd(-1, "Invalid FD (-1) Test");

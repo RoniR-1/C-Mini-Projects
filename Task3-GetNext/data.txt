@@ -1,5 +1,5 @@
-Lets test if this thing works!\n
-I really want this to work\n
-\n
-Hey! there is still more!\n
-Last line!\n
+Lets test if this thing works!
+I really want this to work
+
+Hey! there is still more!
+Last line!
