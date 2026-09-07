@@ -6,18 +6,38 @@ int	main(void)
     void	*mlx_win;
     t_data  img;
 
+    /*
+        Basically, call mlx_init to initialize and mlx_win to get the window
+        Then mlx_new_image to get the image, not sure but I think it just handles things internally.
+        Then call mlx_get_data_addr to gethe address, bpp, line length, endian
+        Change the bytes from img.addre onwards to change the pixels.
+        Once done, push it with mlx_put_image_to_window.
+        Then mlx_loop to start
+    */
+
     mlx = mlx_init();
     mlx_win = mlx_new_window(mlx, 1920, 1080, "Hello world!");
 
     img.img = mlx_new_image(mlx, 1920, 1080);
     img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 
-    for (int y = 1; y < 1080; y *= 3) {
-        for (int x = 1; x < 1920; x *= 2) {
-            my_mlx_pixel_put(&img, x-1, y, 0x00220000);
-            my_mlx_pixel_put(&img, x-1, y-1, 0x00F00F00);
-            my_mlx_pixel_put(&img, x, y-1, 0x0010000F);
-            my_mlx_pixel_put(&img, x, y, 0xF0F00F00);
+
+    // make a rectangle
+    for (int y = 50; y <= 100; y += 50) {
+        for (int x = 0; x <= 100; x++) {
+            my_mlx_pixel_put(&img, x, y, 0x00FF0000);
+        }
+    }
+    for (int x = 0; x <= 100; x += 100) {
+        for (int y = 50; y <= 100; y++) {
+            my_mlx_pixel_put(&img, x, y, 0x00FF0000);
+        }
+    }
+    
+    // attempted gradient
+    for (int y = 200; y < 1000; y++) {
+        for (int x = 200; x < 1500; x++) {
+            my_mlx_pixel_put(&img, x, y, y+(1 << 15) + x*2);
         }
     }
 
