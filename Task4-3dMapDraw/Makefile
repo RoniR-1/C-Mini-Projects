@@ -1,5 +1,5 @@
 CC      = cc
-CFLAGS  = -Wall -Wextra -Werror
+CFLAGS  = -Wall -Wextra -Werror -g
 NAME    = 3dMap
 
 SRCS    = main.c fdfParser.c 
@@ -10,6 +10,8 @@ MLX_LIB = $(MLX_DIR)/libmlx_Linux.a
 GET_NEXT = ../Task3-GetNext/getNextLine.a
 
 all: $(NAME)
+$(GET_NEXT):
+	@make -C $(../Task3-GetNext)
 
 $(MLX_LIB):
 	@make -C $(MLX_DIR)
