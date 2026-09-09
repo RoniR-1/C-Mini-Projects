@@ -2,11 +2,12 @@ CC      = cc
 CFLAGS  = -Wall -Wextra -Werror
 NAME    = 3dMap
 
-SRCS    = main.c
+SRCS    = main.c fdfParser.c 
 OBJS    = $(SRCS:.c=.o)
 
 MLX_DIR = mlx_linux
 MLX_LIB = $(MLX_DIR)/libmlx_Linux.a	
+GET_NEXT = ../Task3-GetNext/getNextLine.a
 
 all: $(NAME)
 
@@ -14,7 +15,7 @@ $(MLX_LIB):
 	@make -C $(MLX_DIR)
 
 $(NAME): $(OBJS) $(MLX_LIB)
-	$(CC) $(OBJS) -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz -o $(NAME)
+	$(CC) $(OBJS) $(GET_NEXT) -L$(MLX_DIR) -lmlx_Linux -L/usr/lib -I$(MLX_DIR) -lXext -lX11 -lm -lz -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -I/usr/include -I$(MLX_DIR) -O3 -c $< -o $@

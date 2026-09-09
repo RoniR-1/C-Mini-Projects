@@ -6,7 +6,7 @@
 /*
     Read the next line according to the file descriptor fd
     fd- The file descriptor
-    return the next line in the file, on error or end of page return null
+    return the next line in the file (null terminated string), on error or end of page return null
 */
 char *get_next_line(int fd) {
     static char* globalBuffer;

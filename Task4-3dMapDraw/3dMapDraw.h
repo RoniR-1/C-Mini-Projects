@@ -1,4 +1,5 @@
 #include "mlx_linux/mlx.h"
+#include "../Task3-GetNext/getNext.h"
 
 typedef struct	s_data {
 	void	*img;
@@ -8,4 +9,10 @@ typedef struct	s_data {
 	int		endian;
 }	t_data;
 
-void my_mlx_pixel_put(t_data* data, int x, int y, int colour);
+typedef struct s_vars {
+	void	*mlx;
+    void	*mlx_win;
+}	t_vars;
+
+int drawMap(char* file);
+int* parseCords(char* s, int* size);
