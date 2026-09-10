@@ -5,7 +5,7 @@ int	main(void) {
     char* donut = "./donut.fdf";
     char* platue = "./platue.fdf";
     char* invader = "./invader.fdf";
-    drawMap(platue);
+    drawMap(invader);
 
 
 
