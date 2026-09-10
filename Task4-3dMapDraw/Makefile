@@ -2,7 +2,7 @@ CC      = cc
 CFLAGS  = -Wall -Wextra -Werror -g
 NAME    = 3dMap
 
-SRCS    = main.c fdfParser.c 
+SRCS    = main.c fdfParser.c fdf_utils.c
 OBJS    = $(SRCS:.c=.o)
 
 MLX_DIR = mlx_linux

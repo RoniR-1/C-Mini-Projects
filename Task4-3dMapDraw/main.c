@@ -2,7 +2,7 @@
 
 int	main(void) {
     //drawMap("./simpleGrid.fdf");
-    drawMap("./donut.fdf");
-    //drawMap("./platue.fdf");
+    //drawMap("./donut.fdf");
+    drawMap("./platue.fdf");
     return 0;
 }
