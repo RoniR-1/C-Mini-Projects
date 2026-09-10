@@ -11,7 +11,7 @@ int	closeWindow(t_vars *vars) {
 void clean_window(t_data* data, int width, int height) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-            *(data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8))) = 0;
+            *(unsigned int*)(data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8))) = 0x0;
         }
     }
 }
@@ -20,10 +20,14 @@ int	handleKey(int keycode, t_mlx* mlx_data) {
     if (keycode == 27 || keycode == XK_Escape) {
         return closeWindow(mlx_data->vars);
     }
-    if (keycode == XK_Left) {
-        clean_window(mlx_data->data, mlx_data->width, mlx_data->height);
-        mlx_data->grid->angle += 10;
+    if (keycode == XK_Left || keycode == XK_Right || keycode == XK_Up || keycode == XK_Down) {
+        if (keycode == XK_Right) mlx_data->grid->angle -= 10;
+        else mlx_data->grid->angle += 10;
         if (mlx_data->grid->angle >= 360) mlx_data->grid->angle -= 360;
+        if (mlx_data->grid->angle < 0) mlx_data->grid->angle += 360;
+        
+        clean_window(mlx_data->data, mlx_data->width, mlx_data->height);
+
         drawGridIso(mlx_data->grid, mlx_data->data);
         mlx_put_image_to_window(mlx_data->vars->mlx, mlx_data->vars->mlx_win, mlx_data->data->img, 0, 0);
         printf("rawr\n");
@@ -42,13 +46,15 @@ int drawMap(char* file) {
     mlx_data.data = &data;
     mlx_data.vars = &vars;
     mlx_data.grid = &grid_data;
+    mlx_data.width = 1920;
+    mlx_data.height = 1080;
 
     grid_data.color = 0x00FF0000;
     grid_data.angle = 0;
 
     vars.mlx = mlx_init();
-    vars.mlx_win = mlx_new_window(vars.mlx, 1920, 1080, "GRID");
-    data.img = mlx_new_image(vars.mlx, 1920, 1080);
+    vars.mlx_win = mlx_new_window(vars.mlx, mlx_data.width, mlx_data.height, "GRID");
+    data.img = mlx_new_image(vars.mlx, mlx_data.width, mlx_data.height);
     data.addr = mlx_get_data_addr(data.img, &data.bits_per_pixel, &data.line_length, &data.endian);
 
     int fd = open(file, O_RDONLY);

@@ -120,7 +120,7 @@ void processPoint(int rowLen, int colLen, int x, int y, int z, double rotate_rad
     double rotate_x = shift_x * cos(rotate_rad) - shift_y * sin(rotate_rad);
     double rotate_y = shift_x * sin(rotate_rad) + shift_y * cos(rotate_rad);
 
-    int scale = 30;
+    int scale = 10;
     int z_scale = 2;
     int offset_x = 960;
     int offset_y = 500;
