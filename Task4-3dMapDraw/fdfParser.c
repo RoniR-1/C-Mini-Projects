@@ -16,20 +16,37 @@ void clean_window(t_data* data, int width, int height) {
     }
 }
 
+void handle_rotations_by_user(int keycode, t_mlx* mlx_data) {
+    if (keycode == XK_comma || keycode == XK_period) {
+        if (keycode == XK_Right) mlx_data->grid->angleY -= 10;
+        else mlx_data->grid->angleY += 10;
+        if (mlx_data->grid->angleY >= 360) mlx_data->grid->angleY -= 360;
+        if (mlx_data->grid->angleY < 0) mlx_data->grid->angleY += 360;
+    }
+    else if (keycode == XK_Left || keycode == XK_Right) {
+        if (keycode == XK_Right) mlx_data->grid->angleZ -= 10;
+        else mlx_data->grid->angleZ += 10;
+        if (mlx_data->grid->angleZ >= 360) mlx_data->grid->angleZ -= 360;
+        if (mlx_data->grid->angleZ < 0) mlx_data->grid->angleZ += 360;
+    }
+    else {
+        if (keycode == XK_Down) mlx_data->grid->angleX -= 10;
+        else mlx_data->grid->angleX += 10;
+        if (mlx_data->grid->angleX >= 360) mlx_data->grid->angleX -= 360;
+        if (mlx_data->grid->angleX < 0) mlx_data->grid->angleX += 360;
+    }
+    
+    clean_window(mlx_data->data, mlx_data->width, mlx_data->height);
+
+    drawGridIso(mlx_data->grid, mlx_data->data);
+    mlx_put_image_to_window(mlx_data->vars->mlx, mlx_data->vars->mlx_win, mlx_data->data->img, 0, 0);
+}
 int	handleKey(int keycode, t_mlx* mlx_data) {
     if (keycode == 27 || keycode == XK_Escape) {
         return closeWindow(mlx_data->vars);
     }
-    if (keycode == XK_Left || keycode == XK_Right || keycode == XK_Up || keycode == XK_Down) {
-        if (keycode == XK_Right) mlx_data->grid->angle -= 10;
-        else mlx_data->grid->angle += 10;
-        if (mlx_data->grid->angle >= 360) mlx_data->grid->angle -= 360;
-        if (mlx_data->grid->angle < 0) mlx_data->grid->angle += 360;
-        
-        clean_window(mlx_data->data, mlx_data->width, mlx_data->height);
-
-        drawGridIso(mlx_data->grid, mlx_data->data);
-        mlx_put_image_to_window(mlx_data->vars->mlx, mlx_data->vars->mlx_win, mlx_data->data->img, 0, 0);
+    if (keycode == XK_Left || keycode == XK_Right || keycode == XK_Up || keycode == XK_Down || keycode == XK_comma || keycode == XK_period) {
+        handle_rotations_by_user(keycode, mlx_data);
         printf("rawr\n");
     }
 	return 0;
@@ -50,7 +67,9 @@ int drawMap(char* file) {
     mlx_data.height = 1080;
 
     grid_data.color = 0x00FF0000;
-    grid_data.angle = 0;
+    grid_data.angleX = 0;
+    grid_data.angleY = 0;
+    grid_data.angleZ = 0;
 
     vars.mlx = mlx_init();
     vars.mlx_win = mlx_new_window(vars.mlx, mlx_data.width, mlx_data.height, "GRID");

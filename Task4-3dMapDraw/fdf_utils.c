@@ -113,38 +113,51 @@ void drawBetween2Points(int x1, int y1, int x2, int y2, unsigned int color, t_da
     else drawBetween2PointsVertic(x1, y1, x2, y2, color, data);
 }
 
-void processPoint(int rowLen, int colLen, int x, int y, int z, double rotate_rad, int* resultX, int* resultY) {
+void processPoint(int rowLen, int colLen, int x, int y, int z, double rotate_rad_X, double rotate_rad_Y, double rotate_rad_Z, int* resultX, int* resultY) {
     double shift_x = x - ((rowLen-1) / 2.0);
     double shift_y = y - ((colLen-1) / 2.0);
+    double shift_z = z*2;
 
-    double rotate_x = shift_x * cos(rotate_rad) - shift_y * sin(rotate_rad);
-    double rotate_y = shift_x * sin(rotate_rad) + shift_y * cos(rotate_rad);
+    // vertical rotation, X axis
+    double vert_y = shift_y * cos(rotate_rad_X) - shift_z * sin(rotate_rad_X);
+    double vert_z = shift_y * sin(rotate_rad_X) + shift_z * cos(rotate_rad_X);
 
-    int scale = 10;
-    int z_scale = 2;
+    //roll rotation, Y axis
+    double roll_x = shift_x * cos(rotate_rad_Y) + vert_z * sin(rotate_rad_Y);
+    double roll_z = -shift_x * sin(rotate_rad_Y) + vert_z * cos(rotate_rad_Y);
+
+    //Horizantal rotation, Z axis
+    double rotate_x = roll_x * cos(rotate_rad_Z) - vert_y * sin(rotate_rad_Z);
+    double rotate_y = roll_x * sin(rotate_rad_Z) + vert_y * cos(rotate_rad_Z);
+
+    double max_dim = (rowLen > colLen) ? rowLen : colLen;
+    double compress = rotate_rad_X > 0 || rotate_rad_Y > 0 ? 100 : 0;
+    double scale = 800.0 / (max_dim * 1.732 + compress);
     int offset_x = 960;
     int offset_y = 500;
     double rad30 = 0.52359877559;
 
     *resultX = (int)round((rotate_x - rotate_y) * scale * cos(rad30)) + offset_x;
-    *resultY = (int)round((rotate_x + rotate_y) * scale * sin(rad30) - (z * z_scale)) + offset_y;
+    *resultY = (int)round((rotate_x + rotate_y) * scale * sin(rad30) - roll_z) + offset_y;
 }
 
 
 void drawGridIso(t_grid* grid_data, t_data* data) {
     double rad1 = 0.01745329252;
-    double rotate = grid_data->angle * rad1;
+    double rotate_X = grid_data->angleX * rad1;
+    double rotate_Y = grid_data->angleY * rad1;
+    double rotate_Z = grid_data->angleZ * rad1;
     
 
     for (int y = 0; y < grid_data->colLen; y++) {
         for (int x = 0; x < grid_data->rowLen; x++) {
             int cx, cy;
-            processPoint(grid_data->rowLen, grid_data->colLen, x, y, grid_data->grid[y][x], rotate, &cx, &cy);
+            processPoint(grid_data->rowLen, grid_data->colLen, x, y, grid_data->grid[y][x], rotate_X, rotate_Y, rotate_Z, &cx, &cy);
             // right neigh
             if (x < grid_data->rowLen - 1) {
                 int neigh_x = x + 1;
                 int neigh_y = y + 1; // fallback in case not initlized 
-                processPoint(grid_data->rowLen, grid_data->colLen, x+1, y, grid_data->grid[y][x+1], rotate, &neigh_x, &neigh_y);
+                processPoint(grid_data->rowLen, grid_data->colLen, x+1, y, grid_data->grid[y][x+1], rotate_X, rotate_Y, rotate_Z, &neigh_x, &neigh_y);
                 drawBetween2Points(cx, cy, neigh_x, neigh_y, grid_data->color, data);
             }
 
@@ -152,7 +165,7 @@ void drawGridIso(t_grid* grid_data, t_data* data) {
             if (y < grid_data->colLen - 1) {
                 int neigh_x = x + 1;
                 int neigh_y = y + 1; // fallback in case not initlized                
-                processPoint(grid_data->rowLen, grid_data->colLen, x, y+1, grid_data->grid[y+1][x], rotate, &neigh_x, &neigh_y);
+                processPoint(grid_data->rowLen, grid_data->colLen, x, y+1, grid_data->grid[y+1][x], rotate_X, rotate_Y, rotate_Z, &neigh_x, &neigh_y);
                 drawBetween2Points(cx, cy, neigh_x, neigh_y, grid_data->color, data);
             }
         }

@@ -6,6 +6,8 @@
 #include "mlx_linux/mlx.h"
 #include "../Task3-GetNext/getNext.h"
 
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+
 typedef struct	s_data {
 	void	*img;
 	char	*addr;
@@ -25,7 +27,9 @@ typedef struct s_grid {
 	int		colLen;
 	int**	grid;
 	unsigned int color;
-	int angle;
+	int angleX;
+	int angleY;
+	int angleZ;
 }	t_grid;
 
 
