@@ -18,6 +18,7 @@ int parse_string_to_int(int argc, char** argv) {
     return result;
 }
 
+
 int is_simulation_running(t_phil_info* phils_info) {
     pthread_mutex_lock(phils_info->stop_flag_mutex);
     int running = phils_info->stop_flag;
@@ -29,7 +30,11 @@ void stop_simulation(t_phil_info* phils_info) {
     phils_info->stop_flag = 0;
     pthread_mutex_unlock(phils_info->stop_flag_mutex);
 }
-
+void print_sync(t_phil_info* info, char* s, long long time, int id) {
+    pthread_mutex_lock(&info->print_mutex);
+    if (is_simulation_running(info)) printf(s, time, id);
+    pthread_mutex_unlock(&info->print_mutex);
+}
 long long get_time_ms(t_phil_info* phils_info) {
     struct timeval time;
     if (gettimeofday(&time, NULL) != 0) return -1;
@@ -63,7 +68,7 @@ int eat(t_phil* phil) {
             return 0;
         }
         time = get_time_ms(phil->phil_info);
-        printf("%lld ms Professor %d has taken a fork\n", time, phil->id);
+        print_sync(phil->phil_info, "%lld ms Professor %d has taken a fork\n", time, phil->id);
         
         while (is_simulation_running(phil->phil_info)) {
             usleep(1000);
@@ -81,19 +86,19 @@ int eat(t_phil* phil) {
     pthread_mutex_lock(&phil->forks[left_fork]);
     if (!is_simulation_running(phil->phil_info)) {pthread_mutex_unlock(&phil->forks[left_fork]); return 0;}
     time = get_time_ms(phil->phil_info); if (time == -1) return -1;
-    printf("%lld ms Professor %d has taken a fork\n", time, phil->id);
+    print_sync(phil->phil_info, "%lld ms Professor %d has taken a fork\n", time, phil->id);
     // fork 2
     pthread_mutex_lock(&phil->forks[right_fork]);
     if (!is_simulation_running(phil->phil_info)) {pthread_mutex_unlock(&phil->forks[right_fork]);pthread_mutex_unlock(&phil->forks[left_fork]); return 0;}
     time = get_time_ms(phil->phil_info); if (time == -1) return -1;
-    printf("%lld ms Professor %d has taken a fork\n", time, phil->id);
+    print_sync(phil->phil_info, "%lld ms Professor %d has taken a fork\n", time, phil->id);
 
     // now eating
     time = get_time_ms(phil->phil_info); if (time == -1) return -1;
     pthread_mutex_lock(&phil->phil_info->last_meals_mutex[phil->id]);
     phil->phil_info->last_meals_time[phil->id] = time;
     pthread_mutex_unlock(&phil->phil_info->last_meals_mutex[phil->id]);
-    printf("%lld ms Professor %d is eating\n", time, phil->id);
+    print_sync(phil->phil_info, "%lld ms Professor %d is eating\n", time, phil->id);
     if (is_simulation_running(phil->phil_info)) usleep(phil->phil_info->time_to_eat * 1000);
     pthread_mutex_unlock(&phil->forks[left_fork]);
     pthread_mutex_unlock(&phil->forks[right_fork]);
@@ -124,15 +129,15 @@ void* phil_life(void* arg) {
         if (!is_simulation_running(phil->phil_info)) break;
         //sleeping
         time = get_time_ms(phil->phil_info); if (time == -1) break;
-        printf("%lld ms Professor %d is sleeping\n", time, phil->id);
+        print_sync(phil->phil_info, "%lld ms Professor %d is sleeping\n", time, phil->id);
 
         usleep(phil->phil_info->time_to_sleep * 1000); // convert ms to micros
         if (!is_simulation_running(phil->phil_info)) break;
         //thinking
         time = get_time_ms(phil->phil_info); if (time == -1) break;
-        printf("%lld ms Professor %d is thinking\n", time, phil->id);
-        long long sleep_time = time - phil->phil_info->last_meals_time[phil->id]; // in ms
-        if (sleep_time > 50) usleep(2.0/4.0 *sleep_time * 10); // slow down fast threads basically
+        print_sync(phil->phil_info, "%lld ms Professor %d is thinking\n", time, phil->id);
+        if (phil->phil_info->number_of_philosophers % 2 != 0)
+            usleep(1000); // give neigh prio
     }
     return NULL;
 }
@@ -147,18 +152,17 @@ void* monitor_phils(void* arg) {
             current_time = get_time_ms(phils_info); if (current_time == -1) {stop_simulation(phils_info); break;}
 
             if (phils_info->last_meals_time[i] != -1 && current_time - phils_info->last_meals_time[i] >= phils_info->time_to_die) {
-                printf("%lld ms Professor %d died\n", current_time, i);
+                print_sync(phils_info, "%lld ms Professor %d died\n", current_time, i);
                 stop_simulation(phils_info);
             }
             pthread_mutex_unlock(&phils_info->last_meals_mutex[i]);
-            
-            if (phils_info->number_of_times_each_philosopher_must_eat != -1) {
-                pthread_mutex_lock(phils_info->phils_ate_mutex);
-                if (phils_info->amount_phils_ate >= phils_info->number_of_times_each_philosopher_must_eat) {
-                    stop_simulation(phils_info);
-                }
-                pthread_mutex_unlock(phils_info->phils_ate_mutex);
+        }
+        if (phils_info->number_of_times_each_philosopher_must_eat != -1) {
+            pthread_mutex_lock(phils_info->phils_ate_mutex);
+            if (phils_info->amount_phils_ate >= phils_info->number_of_times_each_philosopher_must_eat * phils_info->number_of_philosophers) {
+                stop_simulation(phils_info);
             }
+            pthread_mutex_unlock(phils_info->phils_ate_mutex);
         }
         usleep(2000);
     }
@@ -175,6 +179,7 @@ void eat_spaghitti(t_phil_info* phils) {
     int N = phils->number_of_philosophers;
     //pthread_t* threads = calloc(N, sizeof(pthread_t));
     pthread_mutex_t stop_flag_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_t print_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_t phils_ate_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_t* forks = malloc(N * sizeof(pthread_mutex_t)); // each fork a mutex key
     pthread_mutex_t* last_meals_mutex = malloc(N * sizeof(pthread_mutex_t)); // each phil has his own mutex for last meal
@@ -190,6 +195,7 @@ void eat_spaghitti(t_phil_info* phils) {
     phils->phils_array = phils_array;
     phils->stop_flag_mutex = &stop_flag_mutex;
     phils->start_time = 0;
+    phils->print_mutex = print_mutex;
 
     for (i = 0; i < N; i++) {
         int mutex1 = pthread_mutex_init(&forks[i], NULL);
@@ -219,7 +225,6 @@ void eat_spaghitti(t_phil_info* phils) {
     if (pthread_create(&monitor_thread_id, NULL, monitor_phils, phils) != 0) {
         printf("moniter thread failed\n");
     }
-    usleep(1000 * 1000);
     time = get_time_ms(phils); if (time == -1) return;
     phils->start_time = time;
     phils->stop_flag = 1;
@@ -236,5 +241,6 @@ void eat_spaghitti(t_phil_info* phils) {
     }
     pthread_mutex_destroy(&phils_ate_mutex);
     pthread_mutex_destroy(&stop_flag_mutex);
+    pthread_mutex_destroy(&print_mutex);
     free(forks); free(last_meals_mutex); free(last_meals_time); free(phils_array);
 }

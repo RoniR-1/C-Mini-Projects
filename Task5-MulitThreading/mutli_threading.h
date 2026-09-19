@@ -14,6 +14,7 @@ typedef struct s_phil_info {
     int     number_of_times_each_philosopher_must_eat;
     int     amount_phils_ate;
     int     stop_flag;
+    pthread_mutex_t     print_mutex;
     long long           start_time;
     pthread_mutex_t*    stop_flag_mutex;
     struct s_phil**     phils_array;
