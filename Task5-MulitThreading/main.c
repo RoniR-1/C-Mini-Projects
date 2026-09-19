@@ -1,7 +1,7 @@
 #include "./mutli_threading.h"
 
 int main(int argc, char** argv) {
-    t_phil phil;
+    t_phil_info phil;
     if (argc < 5) {
         printf("Too few arguments given.\n");
     } 

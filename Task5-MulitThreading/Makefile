@@ -1,5 +1,5 @@
 CC      = cc
-CFLAGS  = -Wall -Wextra -Werror -g
+CFLAGS  = -Wall -Wextra -Werror -fsanitize=address -fsanitize=undefined -g
 NAME    = phils
 
 SRCS    = main.c philisophers.c
@@ -9,7 +9,7 @@ all: $(NAME)
 
 
 $(NAME): $(OBJS) $(MLX_LIB)
-	$(CC) $(OBJS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
