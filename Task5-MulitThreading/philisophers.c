@@ -117,7 +117,7 @@ void* phil_life(void* arg) {
     }
     long long time = get_time_ms(phil->phil_info); if (time == -1) return NULL;
     
-    if ((phil->id + 1) % 2 != 0) usleep(1000);
+    if ((phil->id + 1) % 2 != 0) usleep(phil->phil_info->time_to_eat * 500);
 
     pthread_mutex_lock(&phil->phil_info->last_meals_mutex[phil->id]);
     phil->phil_info->last_meals_time[phil->id] = time;
@@ -136,8 +136,7 @@ void* phil_life(void* arg) {
         //thinking
         time = get_time_ms(phil->phil_info); if (time == -1) break;
         print_sync(phil->phil_info, "%lld ms Professor %d is thinking\n", time, phil->id);
-        if (phil->phil_info->number_of_philosophers % 2 != 0)
-            usleep(1000); // give neigh prio
+        usleep(500);
     }
     return NULL;
 }
