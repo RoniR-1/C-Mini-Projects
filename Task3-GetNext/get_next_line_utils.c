@@ -52,6 +52,7 @@ char* advanceBuffer(char* buffer) {
         i++;
     }
     newBuffer[i] = 0;
+    free(buffer);
     return newBuffer;
 }
 
