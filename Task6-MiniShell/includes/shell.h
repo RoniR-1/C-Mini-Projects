@@ -18,17 +18,10 @@ typedef enum {
     HEREDOC             // i dont care about it tbh
 } t_redir_type; 
 
-typedef struct s_redirection {
-    t_redir_type    redir;  //1 = REDIR_IN (<), 2 = REDIR_OUT (>) ,3 = REDIR_APPEND (>>), 4 = HEREDOC (<<)
-    char*           target;
-    struct s_redirection*  next;
-} t_redirection;
-
 typedef struct s_command {
     int                fd_in;
     int                fd_out;
     char**              args;
-    t_redirection*      redirection;
     struct s_command*   next_command;
 } t_command;
 
@@ -38,6 +31,6 @@ typedef struct s_command {
 int loop_shell(void);
 t_token* ming_tokenizer(char* s);
 t_command* ming_parse(t_token* token);
-
+int ming_execute(t_command* command);
 
 #endif

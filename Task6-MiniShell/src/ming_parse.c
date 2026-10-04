@@ -71,9 +71,10 @@ t_command* ming_parse(t_token* token) {
         }
         else if (token->type == TOKEN_PIPE) {
             current_command->next_command = allocate_command();
-            int pipe_fd = dup2(current_command->fd_out, current_command->next_command->fd_in);
-            current_command->fd_out = pipe_fd;
-            current_command->next_command->fd_in = pipe_fd;
+            int pipefd[2];
+            if (pipe(pipefd) == -1) perror("Failed to create pipe");
+            current_command->fd_out = pipefd[1];
+            current_command->next_command->fd_in = pipefd[0];
             current_command = current_command->next_command ;
         }
         else {
