@@ -12,6 +12,8 @@
 #include "libft.h"
 #include "ming_tokenizer.h"
 
+#define EXIT_MING_CODE 42
+
 typedef enum {
     REDIR_IN = 1,       // O_RDONLY
     REDIR_OUT,          // O_WRONLY | O_CREAT | O_TRUNC

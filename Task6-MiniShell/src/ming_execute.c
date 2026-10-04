@@ -30,7 +30,7 @@ int ming_launch(t_command* command) {
 int ming_execute(t_command* command) {
     while (command != NULL) {
         if (builtin_index(command) != -1) {
-            if (execute_builtin(command) == -1) return 0;
+            return execute_builtin(command);
         }
         else {
             if (ming_launch(command) != 0) {
