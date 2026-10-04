@@ -39,7 +39,7 @@ t_token* tokenize_general(char* s,t_token* current_token, int* ii, int* first_ch
         current_token = tokonize_word(s, current_token, i, first_char_seen);
         while(s[i] != 0 && s[i] == ' ') {
             i++;
-            *ii++;
+            (*ii)++;
         }
     }
     else if (s[i] == '$') {
