@@ -1,14 +1,14 @@
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=42
-NAME = getNext
+CC      = cc
+CFLAGS  = -Wall -Wextra -Werror -g
+NAME    = libgnl.a
 
-SRCS = get_next_line.c get_next_line_utils.c main.c
-OBJS = $(SRCS:.c=.o)
+SRCS    = get_next_line.c get_next_line_utils.c
+OBJS    = $(SRCS:.c=.o)
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	ar rcs $(NAME) $(OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
