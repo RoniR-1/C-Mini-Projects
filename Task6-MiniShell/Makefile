@@ -11,7 +11,7 @@ LIBFT_DIR   = ../Task 1- Library
 LIBFT_LIB   = $(LIBFT_DIR)/libft.a
 
 SRC_DIR     = src
-CORE_SRCS   = $(SRC_DIR)/loop_shell.c $(SRC_DIR)/ming_parse.c $(SRC_DIR)/ming_tokenizer.c
+CORE_SRCS   = $(SRC_DIR)/loop_shell.c $(SRC_DIR)/ming_tokenizer.c $(SRC_DIR)/ming_parse.c $(SRC_DIR)/ming_execute.c $(SRC_DIR)/ming_calls.c
 SRCS        = $(SRC_DIR)/main.c $(CORE_SRCS)
 OBJS        = $(SRCS:.c=.o)
 

@@ -10,7 +10,8 @@ void free_commands(t_command* command) {
             i++;
         }
         free(command->args);
-        //free(command.)
+        free(command);
+        command = next;
     }
 }
 
@@ -20,10 +21,16 @@ int loop_shell(void) {
     while (1) {
         line = get_next_line(STDIN_FILENO);
         first_command = ming_parse(ming_tokenizer(line));
-        if (ming_execute(first_command) != 0) perror("Error executing in loop shell");
+        int status = ming_execute(first_command);
+        if (status == 1) break;
+        else if (status != 0) {
+            perror("Error executing in loop shell");
+            return -1;
+        }
+
+        free(line);
+        free_commands(first_command);
         break;
     }
-    printf("%d", first_command->fd_in);
-    free(line);
     return 0;
 }

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 #include "getNext.h"
 #include "libft.h"
 #include "ming_tokenizer.h"
@@ -24,6 +25,8 @@ typedef struct s_command {
     char**              args;
     struct s_command*   next_command;
 } t_command;
+
+#include "ming_calls.h"
 
 
 
