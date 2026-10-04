@@ -1,25 +1,53 @@
-CC      = cc
-CFLAGS  = -Wall -Wextra -Werror -g
-NAME    = MiniShell
+CC          = cc
+CFLAGS      = -Wall -Wextra -g -Iincludes -I../Task3-GetNext -I"../Task 1- Library"
 
-SRCS    = main.c 
-OBJS    = $(SRCS:.c=.o)
+NAME        = MingShell
+TEST_BIN    = unit_tests
+
+GNL_DIR     = ../Task3-GetNext
+GNL_LIB     = $(GNL_DIR)/libgnl.a
+
+LIBFT_DIR   = ../Task 1- Library
+LIBFT_LIB   = $(LIBFT_DIR)/libft.a
+
+SRC_DIR     = src
+CORE_SRCS   = $(SRC_DIR)/loop_shell.c $(SRC_DIR)/ming_parse.c $(SRC_DIR)/ming_tokenizer.c
+SRCS        = $(SRC_DIR)/main.c $(CORE_SRCS)
+OBJS        = $(SRCS:.c=.o)
+
+TEST_SRCS   = tests/test_main.c $(CORE_SRCS)
+TEST_OBJS   = $(TEST_SRCS:.c=.o)
 
 all: $(NAME)
 
+$(LIBFT_LIB):
+	@$(MAKE) -C "$(LIBFT_DIR)" bonus
 
-$(NAME): $(OBJS) $(MLX_LIB)
-	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+$(GNL_LIB):
+	@$(MAKE) -C "$(GNL_DIR)"
+
+$(NAME): $(OBJS) $(LIBFT_LIB) $(GNL_LIB)
+	$(CC) $(CFLAGS) $(OBJS) "$(GNL_LIB)" "$(LIBFT_LIB)" -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+test: $(TEST_BIN)
+	@./$(TEST_BIN)
+
+$(TEST_BIN): $(TEST_OBJS) $(LIBFT_LIB) $(GNL_LIB)
+	$(CC) $(CFLAGS) $(TEST_OBJS) "$(GNL_LIB)" "$(LIBFT_LIB)" -o $(TEST_BIN)
+
 clean:
-	rm -f $(OBJS)
+	@rm -f $(OBJS) $(TEST_OBJS)
+	@$(MAKE) -C "$(LIBFT_DIR)" clean
+	@$(MAKE) -C "$(GNL_DIR)" clean
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME) $(TEST_BIN)
+	@$(MAKE) -C "$(LIBFT_DIR)" fclean
+	@$(MAKE) -C "$(GNL_DIR)" fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re test
