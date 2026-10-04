@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include "getNext.h"
-#include "../../Task 1- Library/libft.h"
+#include "libft.h"
 #include "ming_tokenizer.h"
 
 typedef enum {
@@ -23,11 +23,11 @@ typedef struct s_redirection {
 } t_redirection;
 
 typedef struct s_command {
-    int             fd_in;
-    int             fd_out;
-    struct s_command*      next_command;
-    t_redirection*  redirection;
-    char**            args;
+    int*                fd_in;
+    int*                fd_out;
+    struct s_command*   next_command;
+    t_redirection*      redirection;
+    char**              args;
 } t_command;
 
 

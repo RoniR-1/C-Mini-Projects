@@ -14,6 +14,7 @@ void free_tokens(t_token* token) {
 
 t_token* allocate_token(void) {
     t_token * token = calloc(sizeof(t_token), 1);
+    if (token == NULL) perror("Failed token calloc in allocate_token");
     return token;
 }
 
@@ -22,6 +23,7 @@ t_token* tokonize_word(char* s, t_token* current_token, int right, int* left) {
     
     current_token->type = TOKEN_WORD;
     current_token->value = malloc(sizeof(char) * (right - (*left) + 1));
+    if (current_token->value == NULL) perror("Failed malloc for token value in tokonize_word");
     
     int j = *left;
     int k = 0;
