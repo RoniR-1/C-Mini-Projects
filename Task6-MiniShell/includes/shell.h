@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "getNext.h"
 #include "libft.h"
 #include "ming_tokenizer.h"
@@ -23,11 +25,11 @@ typedef struct s_redirection {
 } t_redirection;
 
 typedef struct s_command {
-    int*                fd_in;
-    int*                fd_out;
-    struct s_command*   next_command;
-    t_redirection*      redirection;
+    int                fd_in;
+    int                fd_out;
     char**              args;
+    t_redirection*      redirection;
+    struct s_command*   next_command;
 } t_command;
 
 

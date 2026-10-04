@@ -15,7 +15,8 @@ CORE_SRCS   = $(SRC_DIR)/loop_shell.c $(SRC_DIR)/ming_parse.c $(SRC_DIR)/ming_to
 SRCS        = $(SRC_DIR)/main.c $(CORE_SRCS)
 OBJS        = $(SRCS:.c=.o)
 
-TEST_SRCS   = tests/test_main.c tests/tokenizer_test.c $(CORE_SRCS)
+TEST_DIR	= tests
+TEST_SRCS   = $(TEST_DIR)/test_main.c $(TEST_DIR)/tokenizer_test.c $(TEST_DIR)/parser_test.c $(CORE_SRCS)
 TEST_OBJS   = $(TEST_SRCS:.c=.o)
 
 all: $(NAME)

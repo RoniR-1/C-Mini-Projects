@@ -16,17 +16,6 @@ static const char* token_type_to_str(t_token_type type) {
     }
 }
 
-static void free_tokens(t_token *tokens) {
-    t_token *tmp;
-
-    while (tokens) {
-        tmp = tokens->next;
-        if (tokens->value)
-            free(tokens->value);
-        free(tokens);
-        tokens = tmp;
-    }
-}
 
 typedef struct s_expected_token {
     char         *value;

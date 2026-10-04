@@ -1,16 +1,5 @@
 #include "shell.h"
 
-void free_tokens(t_token* token) {
-    if (token == NULL) return;
-    t_token* next = token->next;
-    while (token != NULL) {
-        free(token->value);
-        free(token);
-        if (next->next == NULL) break;
-        token = next;
-        next = next->next;
-    }
-}
 
 t_token* allocate_token(void) {
     t_token * token = calloc(sizeof(t_token), 1);
@@ -124,13 +113,12 @@ t_token* ming_tokenizer(char* s) {
         perror("tokenizer ended outside state general");
     }
     
+    // remove tail as it doesnt hold anything
     current_token = first_token;
     if (current_token != NULL) {
-        // Walk to the second-to-last node
         while (current_token->next != NULL && current_token->next->next != NULL) {
             current_token = current_token->next;
         }
-        // If the last node is completely empty, trim it
         if (current_token->next != NULL && current_token->next->value == NULL && current_token->next->type == TOKEN_WORD) {
             free(current_token->next);
             current_token->next = NULL;

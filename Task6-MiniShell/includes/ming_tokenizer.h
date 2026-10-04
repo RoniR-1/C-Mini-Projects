@@ -22,4 +22,6 @@ typedef struct s_token {
     struct s_token* next;  
 } t_token;
 
+void free_tokens(t_token* token);
+
 #endif

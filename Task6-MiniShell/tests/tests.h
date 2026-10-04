@@ -5,3 +5,4 @@
 
 
 int test_tokenizer(void);
+int parser_tester(void);
