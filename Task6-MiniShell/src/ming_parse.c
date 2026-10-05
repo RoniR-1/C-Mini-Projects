@@ -53,8 +53,7 @@ char* string_join(char* s1, char* s2) {
 char** string_add(char** s1, char* s2) {
     if (s2 == NULL) return s1;
     int len1 = array_length(s1);
-    int len2 = strlength(s2);
-    char** result = calloc(sizeof(char*), len1 + len2 + 1);
+    char** result = calloc(sizeof(char*), len1 + 2);
     int left = 0;
     while (s1 != NULL && s1[left] != NULL) {
         result[left] = s1[left];
@@ -88,9 +87,12 @@ t_command* ming_parse(t_token* token) {
                 perror("Failed to create pipe");
                 return NULL;
             }
-            current_command->fd_out = pipefd[1];
+
+            if (current_command->fd_out == STDOUT_FILENO) current_command->fd_out = pipefd[1];
+            else close(pipefd[1]);
+
             current_command->next_command->fd_in = pipefd[0];
-            current_command = current_command->next_command ;
+            current_command = current_command->next_command;
         }
         else {
             char* filename;
@@ -104,7 +106,7 @@ t_command* ming_parse(t_token* token) {
             token = token->next;
             filename = token->value;
 
-            if (type == REDIR_IN) {
+            if (type == TOKEN_REDIR_IN) {
                 if (current_command->fd_in != STDIN_FILENO) {
                     close(current_command->fd_in);
                 }
@@ -115,7 +117,7 @@ t_command* ming_parse(t_token* token) {
                 }
                 current_command->fd_in = fd;
             }
-            else if (type == HEREDOC) {
+            else if (type == TOKEN_HEREDOC) {
                 // dont care
             }
             else {
@@ -123,7 +125,7 @@ t_command* ming_parse(t_token* token) {
                     close(current_command->fd_out);
                 }
                 int flags = O_WRONLY | O_CREAT;
-                flags |= type == REDIR_OUT ? O_TRUNC : O_APPEND;
+                flags |= type == TOKEN_REDIR_OUT ? O_TRUNC : O_APPEND;
                 current_command->fd_out = open(filename, flags, mode);
                 if (current_command->fd_out == -1) {
                     perror("Failed opening file in ming parser REDIR_IN");

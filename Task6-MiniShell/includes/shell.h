@@ -14,13 +14,6 @@
 
 #define EXIT_MING_CODE 42
 
-typedef enum {
-    REDIR_IN = 1,       // O_RDONLY
-    REDIR_OUT,          // O_WRONLY | O_CREAT | O_TRUNC
-    REDIR_APPEND,       // O_WRONLY | O_CREAT | O_APPEND
-    HEREDOC             // i dont care about it tbh
-} t_redir_type; 
-
 typedef struct s_command {
     int                fd_in;
     int                fd_out;
@@ -36,6 +29,6 @@ typedef struct s_command {
 int loop_shell(void);
 t_token* ming_tokenizer(char* s);
 t_command* ming_parse(t_token* token);
-int ming_execute(t_command* command);
+int ming_launch(t_command* command);
 
 #endif

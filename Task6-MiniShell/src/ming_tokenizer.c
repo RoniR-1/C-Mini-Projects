@@ -37,10 +37,6 @@ t_token* tokenize_general(char* s,t_token* current_token, int* ii, int* first_ch
     int i = *ii;
     if (s[i] == ' ') {
         current_token = tokonize_word(s, current_token, i, first_char_seen);
-        while(s[i] != 0 && s[i] == ' ') {
-            i++;
-            (*ii)++;
-        }
     }
     else if (s[i] == '$') {
         expand();
@@ -92,7 +88,7 @@ t_token* ming_tokenizer(char* s) {
         }
 
         // STATES   ------------------------------------------------------------------------------------------------
-        if (token_state == STATE_GENERAL) {
+        if (token_state == STATE_GENERAL) { 
             current_token = tokenize_general(s, current_token, &i, &first_char_seen);
         }
         
@@ -110,7 +106,7 @@ t_token* ming_tokenizer(char* s) {
         i++;
     }
     if (token_state != STATE_GENERAL) {
-        perror("tokenizer ended outside state general");
+        //perror("tokenizer ended outside state general");
     }
     
     // remove tail as it doesnt hold anything
