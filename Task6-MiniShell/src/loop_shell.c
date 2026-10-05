@@ -5,11 +5,13 @@ void free_commands(t_command* command) {
     while (command != NULL) {
         t_command* next = command->next_command;
         i = 0;
-        while (command->args[i] != NULL) {
-            free(command->args[i]);
-            i++;
+        if (command->args != NULL) {
+            while (command->args[i] != NULL) {
+                free(command->args[i]);
+                i++;
+            }
+            free(command->args);
         }
-        free(command->args);
         free(command);
         command = next;
     }
@@ -28,12 +30,12 @@ int loop_shell(void) {
     char* line;
     while (1) {
         line = strip_leading_newline(get_next_line(STDIN_FILENO));
+        if (line == NULL) break;
         first_command = ming_parse(ming_tokenizer(line));
-        int status = ming_execute(first_command);
+        int status = ming_launch(first_command);
         if (status == EXIT_MING_CODE) break;
-        else if (status != 0) {
-            perror("Error executing in loop shell");
-            return -1;
+        if (status != 0) {
+            printf("Status of last task: %d", status);
         }
 
         free(line);

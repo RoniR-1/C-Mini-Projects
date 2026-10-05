@@ -11,3 +11,9 @@ int main(void) {
     int success = loop_shell();
     return success;
 }
+
+/*
+testing:    
+./MingShell < inputs.txt > actual_outputs.txt 2>&1
+diff -u expected_outputs.txt actual_outputs.txt
+*/

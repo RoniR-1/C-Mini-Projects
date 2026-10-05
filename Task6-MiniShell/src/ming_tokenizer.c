@@ -16,8 +16,15 @@ t_token* tokonize_word(char* s, t_token* current_token, int right, int* left) {
     
     int j = *left;
     int k = 0;
+    t_tokenizer_state local_state = STATE_GENERAL;
     while (j < right) {
-        if (s[j] != '\"' && s[j] != '\'') {
+        if (s[j] == '\'' && local_state != STATE_IN_DOUBLE) {
+            local_state = (local_state == STATE_GENERAL) ? STATE_IN_SINGLE : STATE_GENERAL;
+        }
+        else if (s[j] == '\"' && local_state != STATE_IN_SINGLE) {
+            local_state = (local_state == STATE_GENERAL) ? STATE_IN_DOUBLE : STATE_GENERAL;
+        }
+        else {
             current_token->value[k] = s[j];
             k++;
         }
@@ -37,10 +44,6 @@ t_token* tokenize_general(char* s,t_token* current_token, int* ii, int* first_ch
     int i = *ii;
     if (s[i] == ' ') {
         current_token = tokonize_word(s, current_token, i, first_char_seen);
-        while(s[i] != 0 && s[i] == ' ') {
-            i++;
-            *ii++;
-        }
     }
     else if (s[i] == '$') {
         expand();
@@ -71,6 +74,7 @@ t_token* tokenize_general(char* s,t_token* current_token, int* ii, int* first_ch
 
 
 t_token* ming_tokenizer(char* s) {
+    if (s == NULL) return NULL;
     t_tokenizer_state token_state = STATE_GENERAL;
     t_token*    first_token = allocate_token();
     t_token*    current_token = first_token;
@@ -92,7 +96,7 @@ t_token* ming_tokenizer(char* s) {
         }
 
         // STATES   ------------------------------------------------------------------------------------------------
-        if (token_state == STATE_GENERAL) {
+        if (token_state == STATE_GENERAL) { 
             current_token = tokenize_general(s, current_token, &i, &first_char_seen);
         }
         
@@ -110,7 +114,9 @@ t_token* ming_tokenizer(char* s) {
         i++;
     }
     if (token_state != STATE_GENERAL) {
-        perror("tokenizer ended outside state general");
+        fprintf(stderr, "MingShell: unexpected EOF while looking for matching quote\n");
+        free_tokens(first_token);
+        return NULL;
     }
     
     // remove tail as it doesnt hold anything

@@ -1,0 +1,62 @@
+echo hello world
+ls -1
+echo "hello     world"
+echo 'single quoted test'
+echo first line > test_file.txt
+cat test_file.txt
+echo second line >> test_file.txt
+cat test_file.txt
+echo overwritten > test_file.txt
+cat test_file.txt
+wc -c < test_file.txt
+echo hello | wc -c
+echo "apple banana cherry" | tr ' ' '\n' | grep banana
+echo "line 1" > in.txt
+echo "line 2" >> in.txt
+echo "line 3" >> in.txt
+cat < in.txt | grep 2 | tr a-z A-Z > out.txt
+cat out.txt
+pwd
+cd ..
+pwd
+       echo      spaces      
+> out.txt echo "reversed order"
+cat out.txt
+echo "a | b > c" '|' '>'
+echo 'hello'"world"no_spaces
+echo "final target" > temp1.txt > temp2.txt > temp3.txt
+cat temp1.txt
+cat temp2.txt
+cat temp3.txt
+echo > hidden.txt hello world
+cat hidden.txt
+echo "1 2 3 4 5" | tr ' ' '\n' | sort -r | head -n 3 | grep -v '5' | wc -l
+echo "start" | /bin/this_does_not_exist | wc -l
+echo "A" "" "" "B"
+echo "Line 1" > mix.txt
+echo "Line 2" >> mix.txt
+echo "Line 3" > mix.txt
+echo "Line 4" >> mix.txt
+cat mix.txt
+echo "hello"|wc -c>out.txt
+cat out.txt
+echo "hello" > dummy.txt | cat
+echo "where do I go?" | > lost.txt
+cat lost.txt
+echo ">" | grep ">" > output.txt
+cat output.txt
+ls -la /usr/bin | grep "a" | sort -r | head -n 50 | wc -l
+yes "testing deadlock" | head -n 50000 | wc -l
+echo "this string never ends
+echo 1 | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat | cat
+< no_such_file.txt cat | wc -l
+echo "'single inside double'" '"double inside single"' "concat"'enated'
+""
+''
+" "
+echo hello>file1.txt|cat<file1.txt
+echo "winner" > a.txt > b.txt > c.txt
+cat a.txt b.txt c.txt
+mkdir test_dir
+./test_dir
+echo "test" > builtin_out.txt
