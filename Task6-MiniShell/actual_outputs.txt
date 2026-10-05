@@ -1,0 +1,47 @@
+hello world
+actual_outputs.txt
+expected_outputs.txt
+includes
+inputs.txt
+Makefile
+MingShell
+src
+tests
+hello     world
+single quoted test
+first line
+first line
+second line
+overwritten
+12
+6
+banana
+LINE 2
+/home/roni/Coding/C-Mini-Projects/Task6-MiniShell
+/home/roni/Coding/C-Mini-Projects
+spaces
+reversed order
+a | b > c | >
+helloworldno_spaces
+final target
+hello world
+2
+Error from execvp in ming_launch: No such file or directory
+0
+A   B
+Line 3
+Line 4
+6
+>
+50
+50000
+MingShell: unexpected EOF while looking for matching quote
+1
+Failed opening file in ming parser REDIR_IN: No such file or directory
+'single inside double' "double inside single" concatenated
+Error from execvp in ming_launch: No such file or directory
+Error from execvp in ming_launch: No such file or directory
+Error from execvp in ming_launch: No such file or directory
+hello
+winner
+Error from execvp in ming_launch: Permission denied

@@ -52,7 +52,7 @@ int ming_cd(t_command* command) {
 }
 
 int ming_help(t_command* command) {
-    char *msg = "Welcome to Ming Shell.\nHope you like it!\n";
+    char *msg = "Welcome to Ming Shell.\nHope you like it!\nCurrently Built-in functions are:\n1.exit: exits MingShell\n2.cd: changes directory\n3.help: helps you\n";
     if (command->fd_out == -1) {
         perror("File desciptor is negative in ming_help");
         return 0;
