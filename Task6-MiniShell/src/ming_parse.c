@@ -69,7 +69,6 @@ char** string_add(char** s1, char* s2) {
 
 t_command* ming_parse(t_token* token) {
     if (token == NULL) {
-        perror("ming parses received null token");
         return NULL;
     }
     t_token* first_token = token;

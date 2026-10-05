@@ -30,6 +30,7 @@ int loop_shell(void) {
     char* line;
     while (1) {
         line = strip_leading_newline(get_next_line(STDIN_FILENO));
+        if (line == NULL) break;
         first_command = ming_parse(ming_tokenizer(line));
         int status = ming_launch(first_command);
         if (status == EXIT_MING_CODE) break;

@@ -44,7 +44,6 @@ int execute_builtin(t_command* command) {
 
 int ming_cd(t_command* command) {
     if (command == NULL || command->args == NULL || command->args[0] == NULL) return -1;
-    printf("%s", command->args[1]);
     if (chdir(command->args[1]) == -1) {
         perror("Failed cd in ming_cd");
         return 0;

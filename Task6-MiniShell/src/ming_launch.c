@@ -10,6 +10,7 @@ int commands_size(t_command *cmd) {
 }
 
 int ming_launch(t_command* command) {
+    fflush(stdout);
     t_command* head_command = command;
     if (command == NULL) return 0;
     // if it the only commaand and its built in, run it on the same process
